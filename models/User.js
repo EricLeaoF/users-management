@@ -86,8 +86,24 @@ class User {
     }
 
    } else {
-    return { status: false, err: "User does not exists!" }
+    return { status: false, err: "User does not exists" }
    }
+
+  }
+
+  async delete(id) {
+    const user = await this.findById(id);
+    if (user) {
+      try {
+        await knex.delete(user).where({ id }).table("users")
+        return { status: true }
+      } catch (err) {
+        return { status: false, err }
+      }
+
+    } else {
+      return { status: false, err: "User does not exists to be deleted" }
+    }
 
   }
 
