@@ -1,4 +1,10 @@
 var User = require("../models/User");
+var PasswordToken = require("../models/PasswordToken");
+var jwt = require("jsonwebtoken");
+var bcrypt = require("bcrypt");
+
+const secret = "abcdefghijklmnopqrstuvwxyzABCDEF"
+
 class UserController {
 
   async index(req, res) {
@@ -84,7 +90,60 @@ class UserController {
     }
 
   }
+
+  async recoverPassword(req, res) {
+    const email = req.body.email;
+    const result = await PasswordToken.create(email);
+    if (result.status) {
+      // Send email
+      console.log('deu certo')
+      res.send("" + result.token);
+    } else {
+      res.status(406);
+      res.send(result.err);
+    }
+  }
+
+  async changePassword(req, res) {
+    const { token, password } = req.body;
+    const isTokenValid = await PasswordToken.validate(token);
+
+    if(isTokenValid.status) {
+
+      await User.changePassword(password, isTokenValid.token.user_id, isTokenValid.token.token);
+      res.send("Password changed");
+    } else {
+      res.status(406);
+      res.send("Invalid token");
+    }
+  }
   
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    const user = await User.findByEmail(email);
+
+    if (user) {
+
+      const result = await bcrypt.compare(password, user.password);
+
+      if (result) {
+
+        const token = jwt.sign({ email: user.email, role: user.role }, secret);
+
+        res.json({ token });
+
+      } else {
+        res.status(406);
+        res.send('Wrong password');
+      }
+    } else {
+
+      res.json({ status: false })
+      
+    }
+
+  }
 
 }
 
