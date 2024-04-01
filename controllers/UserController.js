@@ -2,7 +2,19 @@ var User = require("../models/User");
 class UserController {
 
   async index(req, res) {
+    const users = await User.findAll();
+    res.json(users);
+  }
 
+  async findUser(req, res) {
+    const id = req.params.id;
+    const user = await User.findById(id);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404);
+      res.json({});
+    }
   }
 
   async create(req, res) {
