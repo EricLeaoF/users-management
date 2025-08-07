@@ -3,7 +3,7 @@ var PasswordToken = require("../models/PasswordToken");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcrypt");
 
-const secret = "abcdefghijklmnopqrstuvwxyzABCDEF"
+const secret = process.env.ENCRYPT_SECRET
 
 class UserController {
 
