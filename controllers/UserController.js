@@ -96,7 +96,6 @@ class UserController {
     const result = await PasswordToken.create(email);
     if (result.status) {
       // Send email
-      console.log('deu certo')
       res.send("" + result.token);
     } else {
       res.status(406);

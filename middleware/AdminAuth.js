@@ -2,9 +2,7 @@ var jwt = require('jsonwebtoken');
 const secret = "abcdefghijklmnopqrstuvwxyzABCDEF"
 
 module.exports = function(req, res, next) {
-
   const authToken = req.headers['authorization']
-
   if (authToken != undefined) {
     const bearer = authToken.split(' ');
     const token = bearer[1];
